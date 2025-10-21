@@ -99,7 +99,7 @@ Description=k3s (Rootless)
 Environment=PATH=${HOME}/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Environment=K3S_ROOTLESS_PORT_DRIVER=slirp4netns
 Environment=K3S_ROOTLESS_MTU=1500
-ExecStart=${HOME}/.local/bin/k3s server --rootless --snapshotter=fuse-overlayfs --disable=traefik
+ExecStart=${HOME}/.local/bin/k3s server --rootless --snapshotter=fuse-overlayfs --disable=traefik --tls-san test1-kubernetes
 ExecReload=/bin/kill -s HUP \$MAINPID
 TimeoutSec=0
 RestartSec=2
