@@ -1,0 +1,18 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  namespace: kube-system
+  name: prometheus-node-exporter
+spec:
+  targetNamespace: default
+  createNamespace: true
+  version: 4.48.0
+  chart: prometheus-node-exporter
+  repo: https://prometheus-community.github.io/helm-charts
+  # authSecret:
+  #   name: example-repo-auth
+  # repoCAConfigMap:
+  #   name: example-repo-ca
+  # valuesContent: |-
+  #   image:
+  #     tag: v1.2.2
