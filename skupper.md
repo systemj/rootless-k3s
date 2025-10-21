@@ -7,8 +7,6 @@ kubectl apply -f https://skupper.io/install.yaml
 curl https://skupper.io/install.sh | sh
 ```
 
-
-
 # hub cluster
 ```bash
 skupper -n default site create hub --enable-link-access
