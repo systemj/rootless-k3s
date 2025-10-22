@@ -1,5 +1,4 @@
 # iperf3 test results
-- From `iperf3 -c iperf3` to over skupper connection.
 - 1Gbit LAN
 
 ## iperf server machine (old)
