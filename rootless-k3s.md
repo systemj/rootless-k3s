@@ -154,17 +154,22 @@ journalctl --user k3s-rootless.service
 
 ## testing
 ```bash
+# general (curl, etc)
 k run -i -t --rm --image dtzar/helm-kubectl:latest testing -- /bin/bash
 
+# rsyslog
 logger --udp --server 127.0.0.1 --port 514 -p local0.crit "test message 1 udp"
 logger --tcp --server 127.0.0.1 --port 514 -p local0.crit "test message 1 tcp"
-
-
 logger --tcp --server 192.168.122.36 --port 31234 -p local0.crit "test message 1 tcp remote for real"
 logger --udp --server 192.168.122.36 --port 31234 -p local0.crit "test message 1 udp remote for real"
 
+# iperf client pod
+kubectl run -i -t --image ubuntu:latest test1 -- /bin/bash
+apt update && apt install -y iperf3
+iperf3 -c iperf3^C
 ```
 
+## rsyslog test pod/service
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -203,4 +208,38 @@ spec:
       port: 514
       targetPort: 514
       nodePort: 31234
+```
+
+## iperf test pod/service
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: iperf3
+  labels:
+    app.kubernetes.io/name: iperf3
+spec:
+  containers:
+  - name: iperf3
+    image: networkstatic/iperf3:latest
+    args:
+      - -s
+      - -V
+    ports:
+    - containerPort: 5201
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iperf3
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: iperf3
+  ports:
+    - name: tcp
+      protocol: TCP
+      port: 5201
+      targetPort: 5201
 ```
