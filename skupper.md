@@ -25,5 +25,5 @@ skupper -n default token redeem token.yaml
 skupper -n default link status
 skupper -n default listener create prom 9090
 skupper -n default listener status
-skupper -n default connector create kubernetes 443 --host kubernetes
+skupper -n default connector create test1-kubernetes 443 --host kubernetes
 ```

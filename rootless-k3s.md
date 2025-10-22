@@ -10,10 +10,16 @@ https://docs.k3s.io/advanced#running-rootless-servers-experimental
 
 ## configure host
 
-## install required packages
+### install required packages
 Install OS packages required for rootless operation.
 ```bash
 sudo apt install -y uidmap iptables
+```
+
+### user setup
+Required (...helpful) for systemd things
+```bash
+sudo loginctl enable-linger k3s
 ```
 
 ### configure cgroups v2 delegation
@@ -65,6 +71,7 @@ sudo iptables -t nat -A POSTROUTING -m owner --uid-owner 1000 -p udp --destinati
 
 ### external requirements
 ```bash
+mkdir -p ${HOME}/.local/bin
 curl -Lo ${HOME}/.local/bin/slirp4netns --fail -L https://github.com/rootless-containers/slirp4netns/releases/download/v1.3.3/slirp4netns-$(uname -m)
 chmod +x ${HOME}/.local/bin/slirp4netns
 ```
@@ -118,13 +125,18 @@ KillMode=mixed
 WantedBy=default.target
 EOF
 
+# these must be set if switching from 'sudo su - user'
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 systemctl --user daemon-reload
 systemctl --user enable --now k3s-rootless
 ```
 
 ## user env setup
-```bashd
+```bash
 cat << EOF >> .bashrc
+export XDG_RUNTIME_DIR="/run/user/\$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=\${XDG_RUNTIME_DIR}/bus"
 export KUBECONFIG=\${HOME}/.kube/k3s.yaml
 export PATH=\${HOME}/.local/bin:\${PATH}
 export CONTAINER_RUNTIME_ENDPOINT=/run/user/$(id -u)/k3s/containerd/containerd.sock
