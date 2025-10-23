@@ -152,6 +152,29 @@ systemctl --user stop k3s-rootless.service
 journalctl --user k3s-rootless.service
 ```
 
+## resource utilization
+```
+$ k get nodes -o wide
+NAME       STATUS   ROLES                  AGE     VERSION        INTERNAL-IP   EXTERNAL-IP   OS-IMAGE        KERNEL-VERSION     CONTAINER-RUNTIME
+archvaio   Ready    control-plane,master   2m39s   v1.33.5+k3s1   10.41.0.100   <none>        Manjaro Linux   6.17.1-0-MANJARO   containerd://2.1.4-k3s1
+
+$ k get pods -A -o wide
+NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE     IP          NODE       NOMINATED NODE   READINESS GATES
+kube-system   coredns-64fd4b4794-xnbxp                  1/1     Running   0          2m37s   10.42.0.2   archvaio   <none>           <none>
+kube-system   local-path-provisioner-774c6665dc-7gq8g   1/1     Running   0          2m37s   10.42.0.4   archvaio   <none>           <none>
+kube-system   metrics-server-7bfffcd44-qntng            1/1     Running   0          2m37s   10.42.0.3   archvaio   <none>           <none>
+
+$ k top nodes
+NAME       CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)
+archvaio   161m         4%       799Mi           5%
+
+$ k top pods -A
+NAMESPACE     NAME                                      CPU(cores)   MEMORY(bytes)
+kube-system   coredns-64fd4b4794-xnbxp                  7m           63Mi
+kube-system   local-path-provisioner-774c6665dc-7gq8g   1m           42Mi
+kube-system   metrics-server-7bfffcd44-qntng            12m          71Mi
+```
+
 ## testing
 ```bash
 # general (curl, etc)
@@ -166,7 +189,7 @@ logger --udp --server 192.168.122.36 --port 31234 -p local0.crit "test message 1
 # iperf client pod
 kubectl run -i -t --image ubuntu:latest test1 -- /bin/bash
 apt update && apt install -y iperf3
-iperf3 -c iperf3^C
+iperf3 -c iperf3
 ```
 
 ## rsyslog test pod/service
