@@ -49,6 +49,12 @@ EOF
 sudo sysctl -p /etc/sysctl.d/20-k3s-rootless.conf
 ```
 
+### reboot?
+May be required?
+```bash
+sudo systemctl reboot
+```
+
 ### configure iptables rules
 ```bash
 # loopback interface
