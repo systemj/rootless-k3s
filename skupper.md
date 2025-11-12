@@ -32,15 +32,28 @@ skupper -n default connector create test1-kubernetes 443 --host kubernetes
 
 
 # skupper
+
+## no lb for grant-server
 https://github.com/skupperproject/skupper/blob/93bc6badb1d868ddfa5a89fc47dc06a987bb1dbd/internal/kube/grants/config_test.go#L47
 
 In `install.yaml` comment/delete: `-grant-server-autoconfigure`
 
 ```yaml
 - name: SKUPPER_GRANT_SERVER_BASE_URL
-    value: host.example.com/skupper
+    value: rke.systemj.net/skupper
 - name: SKUPPER_GRANT_SERVER_AUTOCONFIGURE
     value: false
 - name: SKUPPER_GRANT_SERVER_TLS_CREDENTIALS
     value: my-secret
+```
+
+## no lb for router
+```yaml
+apiVersion: skupper.io/v2alpha1
+kind: Site
+metadata:
+  name: test-site
+spec:
+  ha: true
+  linkAccess: local
 ```
